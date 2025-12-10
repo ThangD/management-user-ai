@@ -8,21 +8,21 @@
 ### Step 1: Make Tech Stack Decisions (30 minutes)
 
 **Backend Framework:**
-- [ ] **NestJS** (Recommended - TypeScript, built-in features)
+- [x] **NestJS** (Recommended - TypeScript, built-in features)
 - [ ] Node.js/Express (Simpler, more manual)
 - [ ] Django (Python, batteries included)
 
 **Frontend Framework:**
-- [ ] **Next.js 14** (Recommended - React + SSR + TypeScript)
+- [x] **Next.js 14** (Recommended - React + SSR + TypeScript)
 - [ ] React + Vite (Simpler SPA)
 - [ ] Vue.js/Nuxt
 
 **Database:**
-- [ ] **PostgreSQL** (Recommended - RBAC needs relations)
+- [x] **PostgreSQL** (Recommended - RBAC needs relations)
 - [ ] MongoDB (Only if you prefer NoSQL)
 
 **Mobile (Later):**
-- [ ] React Native (JavaScript, same as web)
+- [x] React Native (JavaScript, same as web)
 - [ ] Flutter (Dart, faster performance)
 
 **My Recommendation:**
@@ -41,7 +41,7 @@
    ```bash
    # Visit: https://makersuite.google.com/app/apikey
    # Click "Get API Key"
-   # Copy your key
+   # Key: AIzaSyCBO_JLbIYNkPrwNHApWg3p3XVQm5Fh7vU
    ```
 
 2. **Sign up for v0.dev (Free)**
