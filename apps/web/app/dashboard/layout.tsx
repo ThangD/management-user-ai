@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { isAuthenticated, removeToken, getProfile } from '@/lib/auth';
 import Link from 'next/link';
+import { Toaster } from 'sonner';
 import { 
   Users, 
   Shield, 
@@ -195,6 +196,7 @@ export default function DashboardLayout({
           </div>
         </main>
       </div>
+      <Toaster position="top-right" richColors />
     </div>
   );
 }

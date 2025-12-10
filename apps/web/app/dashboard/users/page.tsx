@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import api from '@/lib/api';
+import { toast } from 'sonner';
 import { 
   Plus, 
   Search, 
@@ -78,8 +79,9 @@ export default function UsersPage() {
       
       setShowCreateModal(false);
       fetchUsers();
+      toast.success('User created successfully!');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to create user');
+      toast.error(error.response?.data?.message || 'Failed to create user');
     }
   };
 
@@ -101,8 +103,9 @@ export default function UsersPage() {
       setShowEditModal(false);
       setSelectedUser(null);
       fetchUsers();
+      toast.success('User updated successfully!');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to update user');
+      toast.error(error.response?.data?.message || 'Failed to update user');
     }
   };
 
@@ -114,8 +117,9 @@ export default function UsersPage() {
       setShowDeleteModal(false);
       setSelectedUser(null);
       fetchUsers();
+      toast.success('User deleted successfully!');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to delete user');
+      toast.error(error.response?.data?.message || 'Failed to delete user');
     }
   };
 
@@ -134,8 +138,9 @@ export default function UsersPage() {
       setShowAssignRoleModal(false);
       setSelectedUser(null);
       fetchUsers();
+      toast.success('Roles assigned successfully!');
     } catch (error: any) {
-      alert(error.response?.data?.message || 'Failed to assign roles');
+      toast.error(error.response?.data?.message || 'Failed to assign roles');
     }
   };
 

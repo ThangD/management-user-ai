@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Mail, Lock, Eye, EyeOff, LogIn as LogInIcon } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Assuming these are correctly set up in your project
 import api from '@/lib/api';
@@ -66,15 +67,21 @@ const LoginPage: React.FC = () => {
       const response = await api.post<LoginResponse>('/auth/login', { email, password });
       const { accessToken } = response.data;
       setToken(accessToken);
+      toast.success('Login successful! Redirecting...');
       router.push('/dashboard');
     } catch (error: any) {
       console.error('Login error:', error);
       if (error.response && error.response.data && error.response.data.message) {
         setApiError(error.response.data.message);
+        toast.error(error.response.data.message);
       } else if (error.message) {
-        setApiError('Network error or server unreachable. Please try again.');
+        const errorMsg = 'Network error or server unreachable. Please try again.';
+        setApiError(errorMsg);
+        toast.error(errorMsg);
       } else {
-        setApiError('An unexpected error occurred. Please try again.');
+        const errorMsg = 'An unexpected error occurred. Please try again.';
+        setApiError(errorMsg);
+        toast.error(errorMsg);
       }
     } finally {
       setLoading(false);
