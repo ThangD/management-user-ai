@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/ThangD/management-user-ai/issues"
   },
-  "homepage": "https://github.com/ThangD/management-user-ai#readme"
+  "homepage": "https://github.com/ThangD/management-user-ai#readme",
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1"
+  }
 }
