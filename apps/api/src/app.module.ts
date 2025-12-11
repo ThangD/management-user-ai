@@ -7,6 +7,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
+import { HealthController } from './health/health.controller';
 
 @Module({
   imports: [
@@ -19,7 +20,7 @@ import { PermissionsModule } from './permissions/permissions.module';
     RolesModule,
     PermissionsModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, HealthController],
   providers: [AppService],
 })
 export class AppModule {}
