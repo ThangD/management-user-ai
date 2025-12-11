@@ -21,6 +21,10 @@
   - Go to Settings → **Builder**: Select **Dockerfile**
   - Railway will auto-detect the Dockerfile in apps/api
   - Leave Build Command and Start Command empty (Dockerfile handles this)
+- [ ] **DISABLE HEALTHCHECK** (temporary):
+  - Go to Settings → Deploy
+  - Find "Healthcheck" section
+  - Toggle it **OFF** (we'll check manually first)
 - [ ] Variables tab - Add these:
   ```
   DATABASE_URL = postgresql://... (from Neon)
@@ -32,6 +36,7 @@
 - [ ] Settings → Generate Domain
 - [ ] Copy API URL: `https://xxx.up.railway.app`
 - [ ] Test: Visit `https://xxx.up.railway.app/api` (should show API docs)
+- [ ] Once working, you can re-enable healthcheck with path `/health`
 
 **Alternative: Fly.io** (if Railway asks for card)
 - [ ] Go to https://fly.io
