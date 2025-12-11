@@ -52,12 +52,11 @@ RUN npm install -g ts-node typescript
 COPY start.sh ./
 RUN chmod +x start.sh
 
-# Expose port
+# Expose port (Railway uses PORT env var)
 EXPOSE 3001
 
-# Health check - Extended start period for migrations and seeding
-HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
-  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+# Remove healthcheck - Railway handles this externally
+# HEALTHCHECK is not needed and can cause issues with Railway's deployment
 
 # Start application with migrations
 CMD ["./start.sh"]
