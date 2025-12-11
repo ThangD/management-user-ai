@@ -27,6 +27,9 @@ FROM node:22-alpine
 
 WORKDIR /app
 
+# Install OpenSSL for Prisma
+RUN apk add --no-cache openssl
+
 # Copy package files and install production dependencies
 COPY package*.json ./
 RUN npm install --production && npm install prisma@^5.22.0

@@ -9,4 +9,4 @@ echo "🌱 Seeding database..."
 npx ts-node prisma/seed.ts || echo "⚠️  Seed failed or already seeded"
 
 echo "🚀 Starting application..."
-exec node dist/main.js
+exec node dist/src/main.js
