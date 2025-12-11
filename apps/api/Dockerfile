@@ -63,5 +63,7 @@ CMD sh -c "echo '=== STARTING API ===' && \
     echo 'Running migrations...' && \
     npx prisma migrate deploy --schema=./prisma/schema.prisma && \
     echo 'Migrations complete!' && \
+    echo 'Checking build output...' && \
+    ls -la dist/ && \
     echo 'Starting NestJS on port ${PORT:-3001}...' && \
-    node dist/src/main.js"
+    node dist/main.js 2>&1"
