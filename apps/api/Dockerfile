@@ -3,14 +3,14 @@ FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files from api directory
-COPY apps/api/package*.json ./
+# Copy package files
+COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy source code from api directory
-COPY apps/api/ ./
+# Copy source code
+COPY . .
 
 # Build application
 RUN npm run build
@@ -21,7 +21,7 @@ FROM node:22-alpine
 WORKDIR /app
 
 # Copy package files and install production dependencies
-COPY apps/api/package*.json ./
+COPY package*.json ./
 RUN npm install --production
 
 # Copy built application from builder

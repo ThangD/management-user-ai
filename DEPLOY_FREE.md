@@ -16,10 +16,11 @@
 - [ ] Sign up with GitHub (no card needed!)
 - [ ] New Project → Deploy from GitHub repo
 - [ ] Select your repository
-- [ ] **IMPORTANT**: Railway will auto-detect `railway.json` in `apps/api`
-- [ ] Settings:
-  - Root Directory: `apps/api`
-  - Railway will use `railway.json` config automatically
+- [ ] **IMPORTANT Configuration**:
+  - Go to Settings → **Root Directory**: Set to `apps/api`
+  - Go to Settings → **Builder**: Select **Nixpacks** (NOT Docker!)
+  - Railway will auto-detect `railway.json` and use it
+  - Leave Build Command and Start Command empty (railway.json handles this)
 - [ ] Variables tab - Add these:
   ```
   DATABASE_URL = postgresql://... (from Neon)
