@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Key, Plus, Trash2, Shield, X, Search, ChevronDown, Loader2 } from 'lucide-react';
 import clsx from 'clsx'; // For conditional class names
+import { PermissionsSkeleton } from '@/components/loading-skeletons';
 
 // --- MOCK API (Replace with actual '@/lib/api' in a real project) ---
 interface Permission {
@@ -388,10 +389,7 @@ export default function PermissionsManagementPage() {
         )}
 
         {loading && (
-          <div className="flex justify-center items-center py-10">
-            <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
-            <p className="ml-3 text-lg text-gray-600">Loading permissions...</p>
-          </div>
+          <PermissionsSkeleton />
         )}
 
         {!loading && sortedResources.length === 0 && (

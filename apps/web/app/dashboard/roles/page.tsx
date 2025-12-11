@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { Shield, Plus, Edit, Trash2, Key, X, Search, Users, ShieldCheck, Lock } from 'lucide-react';
 import api from '@/lib/api'; // Assuming '@/lib/api' is configured with axios and JWT
+import { RolesSkeleton } from '@/components/loading-skeletons';
 
 // Define Role and Permission interfaces as per requirements
 interface Role {
@@ -253,9 +254,7 @@ const RolesManagementPage = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-        </div>
+        <RolesSkeleton />
       ) : filteredRoles.length === 0 ? (
         <div className="text-center py-16">
           <Shield className="mx-auto h-20 w-20 text-gray-400" />

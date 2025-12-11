@@ -35,4 +35,20 @@ api.interceptors.response.use(
   }
 );
 
+// API Helper Functions
+export const fetchUsers = async () => {
+  const response = await api.get('/users');
+  return response.data;
+};
+
+export const fetchRoles = async () => {
+  const response = await api.get('/roles');
+  return response.data;
+};
+
+export const fetchPermissions = async () => {
+  const response = await api.get('/permissions');
+  return response.data;
+};
+
 export default api;
