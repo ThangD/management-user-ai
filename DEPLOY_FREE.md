@@ -6,25 +6,37 @@
 - [ ] Go to https://neon.tech
 - [ ] Sign up with GitHub (no card!)
 - [ ] Create project: `management-users-db`
-- [ ] Copy connection string
-- [ ] Save for later
+- [ ] On the dashboard, find **"Connection Details"** section
+- [ ] Select **"Pooled connection"** from dropdown
+- [ ] Copy the connection string (starts with `postgresql://...`)
+- [ ] Save it - you'll need it for Render!
 
-### 2️⃣ Backend - Render (10 mins)
-- [ ] Go to https://render.com
-- [ ] Sign up with GitHub (no card!)
-- [ ] New Web Service → Connect your repo
+### 2️⃣ Backend - Railway (10 mins) ⭐ NO CARD REQUIRED
+- [ ] Go to https://railway.app
+- [ ] Sign up with GitHub (no card needed!)
+- [ ] New Project → Deploy from GitHub repo
+- [ ] Select your repository
 - [ ] Settings:
-  - Name: `management-users-api`
-  - Root: `apps/api`
-  - Build: `npm install && npm run build`
-  - Start: `npm run start:prod`
-- [ ] Environment Variables:
+  - Root Directory: `apps/api`
+  - Build Command: `npm install && npm run build`
+  - Start Command: `npm run start:prod`
+  - Port: `3001`
+- [ ] Variables tab - Add:
   - `DATABASE_URL` = (paste from Neon)
   - `JWT_SECRET` = (run: `openssl rand -base64 32`)
   - `NODE_ENV` = `production`
   - `PORT` = `3001`
 - [ ] Deploy (wait 5-10 mins)
-- [ ] Copy API URL: `https://xxx.onrender.com`
+- [ ] Settings → Generate Domain
+- [ ] Copy API URL: `https://xxx.up.railway.app`
+
+**Alternative: Fly.io** (if Railway asks for card)
+- [ ] Go to https://fly.io
+- [ ] Sign up (no card for hobby tier)
+- [ ] Install flyctl: `brew install flyctl` (Mac) or download
+- [ ] Run: `cd apps/api && flyctl launch`
+- [ ] Follow prompts, set environment variables
+- [ ] Deploy: `flyctl deploy`
 
 ### 3️⃣ Frontend - Vercel (10 mins)
 - [ ] Go to https://vercel.com
@@ -54,9 +66,9 @@
 | Service | Cost | Limits |
 |---------|------|--------|
 | Neon (Database) | **$0** | 0.5GB storage |
-| Render (Backend) | **$0** | 750 hours/month |
+| Railway (Backend) | **$0** | $5 credit/month (enough!) |
 | Vercel (Frontend) | **$0** | Unlimited |
-| **TOTAL** | **$0/month** | ✅ Forever FREE |
+| **TOTAL** | **$0/month** | ✅ NO CARD NEEDED |
 
 ---
 
@@ -80,10 +92,10 @@ openssl rand -base64 32
 
 ## 🆘 Common Issues
 
-**Render: First request is slow (30s)**
-- This is normal for FREE tier
-- Service "wakes up" after idle
-- Upgrade to $7/month for always-on
+**Railway: Out of credits**
+- You get $5/month free credits
+- Should be enough for small apps
+- Optimize by setting sleep after inactivity
 
 **Vercel: CORS error**
 - Add your Vercel URL to CORS in `apps/api/src/main.ts`
