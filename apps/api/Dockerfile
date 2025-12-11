@@ -59,4 +59,4 @@ EXPOSE 3001
 # HEALTHCHECK is not needed and can cause issues with Railway's deployment
 
 # Start application with migrations
-CMD ["./start.sh"]
+CMD ["/bin/sh", "./start.sh"]
