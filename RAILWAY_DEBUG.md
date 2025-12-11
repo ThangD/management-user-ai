@@ -1,5 +1,23 @@
 # Railway Deployment Debugging Guide
 
+## ⚠️ CURRENT ISSUE: Dockerfile Not Found Error
+
+If you see: **"Dockerfile 'Dockerfile' does not exist"**
+
+### Quick Fix:
+1. Railway Settings → scroll to **Builder** section
+2. Make sure **DOCKERFILE** is selected from dropdown (not Nixpacks)
+3. **Dockerfile Path**: Try in this order:
+   - Leave empty (let Railway auto-detect)
+   - OR type `Dockerfile`
+   - OR type `./Dockerfile`
+4. **Root Directory**: MUST be `apps/api`
+5. **Build Command**: DELETE/CLEAR this field completely
+6. **Start Command**: DELETE/CLEAR this field completely
+7. Click **Save** and redeploy
+
+---
+
 ## ✅ Changes Made
 
 ### Enhanced Logging
