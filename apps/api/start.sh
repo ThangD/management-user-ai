@@ -42,19 +42,29 @@ fi
 
 echo ""
 echo "🔄 Running database migrations..."
-npx prisma migrate deploy --schema=./prisma/schema.prisma || {
-  echo "⚠️  Migration failed with exit code $?"
+set +e  # Don't exit on error
+npx prisma migrate deploy --schema=./prisma/schema.prisma
+MIGRATION_EXIT=$?
+set -e  # Re-enable exit on error
+
+if [ $MIGRATION_EXIT -ne 0 ]; then
+  echo "⚠️  Migration failed with exit code $MIGRATION_EXIT"
   echo "⚠️  This might be expected if migrations already applied"
-  echo "⚠️  Continuing with startup..."
-}
+fi
+echo "✅ Migration step completed"
 
 echo ""
 echo "🌱 Seeding database..."
-npx ts-node prisma/seed.ts || {
-  echo "⚠️  Seed failed with exit code $?"
+set +e  # Don't exit on error
+npx ts-node prisma/seed.ts
+SEED_EXIT=$?
+set -e  # Re-enable exit on error
+
+if [ $SEED_EXIT -ne 0 ]; then
+  echo "⚠️  Seed failed with exit code $SEED_EXIT"
   echo "⚠️  This is expected if data already exists"
-  echo "⚠️  Continuing with startup..."
-}
+fi
+echo "✅ Seed step completed"
 
 echo ""
 echo "================================================"
