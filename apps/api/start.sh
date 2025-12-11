@@ -62,6 +62,16 @@ echo "📍 API endpoint: http://localhost:${PORT:-3001}/api"
 echo "================================================"
 echo ""
 echo "⏳ Launching node process..."
+echo "📝 Command: node dist/src/main.js"
+echo "🔍 Node modules check:"
+ls -la node_modules/@nestjs/core 2>&1 | head -3 || echo "NestJS not found"
+ls -la node_modules/@prisma/client 2>&1 | head -3 || echo "Prisma client not found"
+echo ""
 
-# Start the application (seeding will happen automatically via Prisma postinstall)
-exec node dist/src/main.js
+# Start the application with error handling
+set +e
+node dist/src/main.js 2>&1
+APP_EXIT=$?
+echo ""
+echo "❌ Application exited with code: $APP_EXIT"
+exit $APP_EXIT
