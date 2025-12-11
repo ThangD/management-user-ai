@@ -58,5 +58,10 @@ EXPOSE 3001
 # Remove healthcheck - Railway handles this externally
 # HEALTHCHECK is not needed and can cause issues with Railway's deployment
 
-# Start application with migrations
-CMD ["/bin/sh", "./start.sh"]
+# Start application with migrations - inline to ensure logs appear
+CMD sh -c "echo '=== STARTING API ===' && \
+    echo 'Running migrations...' && \
+    npx prisma migrate deploy --schema=./prisma/schema.prisma && \
+    echo 'Migrations complete!' && \
+    echo 'Starting NestJS on port ${PORT:-3001}...' && \
+    node dist/src/main.js"
