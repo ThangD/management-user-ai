@@ -13,7 +13,7 @@ RUN npm install
 COPY . .
 
 # Generate Prisma Client
-RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Build application
 RUN npm run build
@@ -31,7 +31,7 @@ RUN npm install --production
 COPY prisma ./prisma
 
 # Generate Prisma Client
-RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
