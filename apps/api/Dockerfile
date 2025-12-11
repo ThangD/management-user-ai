@@ -12,6 +12,9 @@ RUN npm install
 # Copy source code
 COPY . .
 
+# Generate Prisma Client
+RUN npx prisma generate
+
 # Build application
 RUN npm run build
 
@@ -23,6 +26,12 @@ WORKDIR /app
 # Copy package files and install production dependencies
 COPY package*.json ./
 RUN npm install --production
+
+# Copy prisma schema
+COPY prisma ./prisma
+
+# Generate Prisma Client
+RUN npx prisma generate
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
