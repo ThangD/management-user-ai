@@ -68,10 +68,6 @@ ls -la node_modules/@nestjs/core 2>&1 | head -3 || echo "NestJS not found"
 ls -la node_modules/@prisma/client 2>&1 | head -3 || echo "Prisma client not found"
 echo ""
 
-# Start the application with error handling
-set +e
-node dist/src/main.js 2>&1
-APP_EXIT=$?
-echo ""
-echo "❌ Application exited with code: $APP_EXIT"
-exit $APP_EXIT
+# Start the application with exec (replaces shell process)
+echo "🏃 Executing node..."
+exec node dist/src/main.js
