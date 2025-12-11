@@ -29,7 +29,7 @@ WORKDIR /app
 
 # Copy package files and install production dependencies
 COPY package*.json ./
-RUN npm install --production && npm install prisma@^7.1.0
+RUN npm install --production && npm install prisma@^5.22.0
 
 # Copy prisma schema
 COPY prisma ./prisma
