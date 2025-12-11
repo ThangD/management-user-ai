@@ -54,19 +54,6 @@ fi
 echo "✅ Migration step completed"
 
 echo ""
-echo "🌱 Seeding database..."
-set +e  # Don't exit on error
-npx ts-node prisma/seed.ts
-SEED_EXIT=$?
-set -e  # Re-enable exit on error
-
-if [ $SEED_EXIT -ne 0 ]; then
-  echo "⚠️  Seed failed with exit code $SEED_EXIT"
-  echo "⚠️  This is expected if data already exists"
-fi
-echo "✅ Seed step completed"
-
-echo ""
 echo "================================================"
 echo "🚀 Starting NestJS application..."
 echo "🔌 Listening on port: ${PORT:-3001}"
@@ -74,6 +61,7 @@ echo "📍 Health endpoint: http://localhost:${PORT:-3001}/health"
 echo "📍 API endpoint: http://localhost:${PORT:-3001}/api"
 echo "================================================"
 echo ""
+echo "⏳ Launching node process..."
 
-# Start the application
+# Start the application (seeding will happen automatically via Prisma postinstall)
 exec node dist/src/main.js
