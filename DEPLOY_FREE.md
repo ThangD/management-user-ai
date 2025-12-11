@@ -18,16 +18,16 @@
 - [ ] Select your repository
 - [ ] **IMPORTANT Configuration**:
   - Go to Settings → **Root Directory**: Set to `apps/api`
-  - Go to Settings → **Builder**: Select **Nixpacks** (NOT Docker!)
-  - Railway will auto-detect `railway.json` and use it
-  - Leave Build Command and Start Command empty (railway.json handles this)
+  - Go to Settings → **Builder**: Select **Dockerfile**
+  - Railway will auto-detect the Dockerfile in apps/api
+  - Leave Build Command and Start Command empty (Dockerfile handles this)
 - [ ] Variables tab - Add these:
   ```
   DATABASE_URL = postgresql://... (from Neon)
   JWT_SECRET = (run: openssl rand -base64 32)
   NODE_ENV = production
-  PORT = 3001
   ```
+  **Note**: Remove PORT variable - Railway sets it automatically
 - [ ] Deploy (wait 5-10 mins)
 - [ ] Settings → Generate Domain
 - [ ] Copy API URL: `https://xxx.up.railway.app`
