@@ -14,7 +14,7 @@ COPY . .
 
 # Generate Prisma Client (needs dummy DATABASE_URL)
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-RUN npx prisma generate --schema=./prisma/schema.prisma
+RUN npx prisma generate
 
 # Build application
 RUN npm run build
@@ -29,14 +29,14 @@ WORKDIR /app
 
 # Copy package files and install production dependencies
 COPY package*.json ./
-RUN npm install --production
+RUN npm install --production && npm install prisma@^7.1.0
 
 # Copy prisma schema
 COPY prisma ./prisma
 
 # Generate Prisma Client (needs dummy DATABASE_URL)
 ENV DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
-RUN npx prisma generate --schema=./prisma/schema.prisma
+RUN npx prisma generate
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
