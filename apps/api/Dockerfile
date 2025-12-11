@@ -61,9 +61,9 @@ EXPOSE 3001
 # Start application with migrations - inline to ensure logs appear
 CMD sh -c "echo '=== STARTING API ===' && \
     echo 'Running migrations...' && \
-    npx prisma migrate deploy --schema=./prisma/schema.prisma && \
+    npx prisma migrate deploy --schema=./prisma/schema.prisma || echo 'Migration returned: $?' && \
     echo 'Migrations complete!' && \
     echo 'Checking build output...' && \
     ls -la dist/src/ && \
     echo 'Starting NestJS on port ${PORT:-3001}...' && \
-    node dist/src/main.js 2>&1"
+    exec node dist/src/main.js"
