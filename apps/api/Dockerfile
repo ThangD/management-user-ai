@@ -19,6 +19,9 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 # Build application
 RUN npm run build
 
+# Copy seed file to dist for production
+RUN mkdir -p dist/prisma && cp prisma/seed.ts dist/prisma/seed.ts
+
 # Production stage
 FROM node:22-alpine
 
@@ -37,9 +40,21 @@ RUN npx prisma generate --schema=./prisma/schema.prisma
 
 # Copy built application from builder
 COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
+
+# Install ts-node for seed script
+RUN npm install -g ts-node typescript
+
+# Copy startup script
+COPY start.sh ./
+RUN chmod +x start.sh
 
 # Expose port
 EXPOSE 3001
 
-# Start application
-CMD ["node", "dist/main.js"]
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3001/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"
+
+# Start application with migrations
+CMD ["./start.sh"]
