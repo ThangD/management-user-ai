@@ -16,19 +16,21 @@
 - [ ] Sign up with GitHub (no card needed!)
 - [ ] New Project → Deploy from GitHub repo
 - [ ] Select your repository
+- [ ] **IMPORTANT**: Railway will auto-detect `railway.json` in `apps/api`
 - [ ] Settings:
   - Root Directory: `apps/api`
-  - Build Command: `npm install && npm run build`
-  - Start Command: `npm run start:prod`
-  - Port: `3001`
-- [ ] Variables tab - Add:
-  - `DATABASE_URL` = (paste from Neon)
-  - `JWT_SECRET` = (run: `openssl rand -base64 32`)
-  - `NODE_ENV` = `production`
-  - `PORT` = `3001`
+  - Railway will use `railway.json` config automatically
+- [ ] Variables tab - Add these:
+  ```
+  DATABASE_URL = postgresql://... (from Neon)
+  JWT_SECRET = (run: openssl rand -base64 32)
+  NODE_ENV = production
+  PORT = 3001
+  ```
 - [ ] Deploy (wait 5-10 mins)
 - [ ] Settings → Generate Domain
 - [ ] Copy API URL: `https://xxx.up.railway.app`
+- [ ] Test: Visit `https://xxx.up.railway.app/api` (should show API docs)
 
 **Alternative: Fly.io** (if Railway asks for card)
 - [ ] Go to https://fly.io
