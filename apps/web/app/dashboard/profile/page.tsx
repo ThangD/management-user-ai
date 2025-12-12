@@ -8,7 +8,7 @@ interface UserProfile {
   email: string;
   name: string;
   status: string;
-  roles: Array<{ id: string; name: string }>;
+  roles?: Array<{ id: string; name: string }>;
   createdAt: string;
 }
 
@@ -242,11 +242,15 @@ export default function ProfilePage() {
             <div>
               <label className="block text-sm font-medium text-gray-500">Roles</label>
               <div className="flex gap-2 mt-1">
-                {profile.roles.map((role) => (
-                  <span key={role.id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
-                    {role.name}
-                  </span>
-                ))}
+                {profile.roles && profile.roles.length > 0 ? (
+                  profile.roles.map((role) => (
+                    <span key={role.id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
+                      {role.name}
+                    </span>
+                  ))
+                ) : (
+                  <span className="text-gray-500 text-sm">No roles assigned</span>
+                )}
               </div>
             </div>
             <div>
