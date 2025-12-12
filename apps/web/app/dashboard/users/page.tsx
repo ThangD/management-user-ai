@@ -65,7 +65,7 @@ export default function UsersPage() {
       
       if (searchTerm) params.append('search', searchTerm);
       if (statusFilter) params.append('status', statusFilter);
-      if (roleFilter) params.append('role', roleFilter);
+      if (roleFilter) params.append('roleId', roleFilter);
       
       const response = await api.get(`/users?${params.toString()}`);
       setUsers(response.data.data);
@@ -229,7 +229,7 @@ export default function UsersPage() {
         >
           <option value="">All Roles</option>
           {roles.map((role) => (
-            <option key={role.id} value={role.name}>
+            <option key={role.id} value={role.id}>
               {role.name}
             </option>
           ))}
