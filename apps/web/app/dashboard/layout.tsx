@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { isAuthenticated, removeToken, getProfile } from '@/lib/auth';
 import Link from 'next/link';
 import { Toaster } from 'sonner';
@@ -23,6 +23,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
   const [user, setUser] = useState<any>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -79,11 +80,16 @@ export default function DashboardLayout({
           <nav className="flex-1 px-2 pb-4 space-y-1">
             {navigation.map((item) => {
               const Icon = item.icon;
+              const isActive = pathname === item.href;
               return (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="group flex items-center px-3 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition"
+                  className={`group flex items-center px-3 py-3 text-sm font-medium rounded-lg transition ${
+                    isActive
+                      ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400'
+                  }`}
                 >
                   <Icon className="mr-3 h-5 w-5" />
                   {item.name}
@@ -143,12 +149,17 @@ export default function DashboardLayout({
                 <nav className="px-2 space-y-1">
                   {navigation.map((item) => {
                     const Icon = item.icon;
+                    const isActive = pathname === item.href;
                     return (
                       <Link
                         key={item.name}
                         href={item.href}
                         onClick={() => setSidebarOpen(false)}
-                        className="group flex items-center px-3 py-3 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400"
+                        className={`group flex items-center px-3 py-3 text-sm font-medium rounded-lg ${
+                          isActive
+                            ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-700 dark:text-indigo-300'
+                            : 'text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-gray-700 hover:text-indigo-600 dark:hover:text-indigo-400'
+                        }`}
                       >
                         <Icon className="mr-3 h-5 w-5" />
                         {item.name}
