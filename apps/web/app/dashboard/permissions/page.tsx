@@ -63,8 +63,6 @@ export default function PermissionsManagementPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [formData, setFormData] = useState<CreatePermissionFormData>({
     resource: '',
@@ -299,7 +297,7 @@ export default function PermissionsManagementPage() {
           <PermissionsSkeleton />
         )}
 
-        {!loading && paginatedSortedResources.length === 0 && (
+        {!loading && sortedResources.length === 0 && (
           <div className="p-8 text-center bg-white rounded-lg shadow-sm border border-gray-200">
             <Key className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-lg font-medium text-gray-900">No permissions found</h3>
@@ -309,9 +307,9 @@ export default function PermissionsManagementPage() {
           </div>
         )}
 
-        {!loading && paginatedSortedResources.length > 0 && (
+        {!loading && sortedResources.length > 0 && (
           <div className="space-y-6">
-            {paginatedSortedResources.map((resource) => (
+            {sortedResources.map((resource) => (
               <div key={resource} className="rounded-lg border border-gray-200 bg-white shadow-sm">
                 <button
                   onClick={() => toggleResourceExpansion(resource)}
@@ -322,7 +320,7 @@ export default function PermissionsManagementPage() {
                     <Shield className="h-6 w-6 text-indigo-500" />
                     <h2 className="text-xl font-semibold text-gray-900 capitalize">{resource}</h2>
                     <span className="inline-flex items-center rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-medium text-indigo-800">
-                      {paginatedGroupedPermissions[resource].length} permissions
+                      {groupedPermissions[resource].length} permissions
                     </span>
                   </div>
                   <ChevronDown
@@ -335,7 +333,7 @@ export default function PermissionsManagementPage() {
                 {expandedResources.has(resource) && (
                   <div className="p-4 border-t border-gray-200">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {paginatedGroupedPermissions[resource].map((permission) => (
+                      {groupedPermissions[resource].map((permission) => (
                         <div
                           key={permission.id}
                           className="relative bg-white border border-gray-100 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow group"
@@ -395,78 +393,6 @@ export default function PermissionsManagementPage() {
                 )}
               </div>
             ))}
-          </div>
-        )}
-
-        {/* Pagination */}
-        {totalPages > 1 && !loading && (
-          <div className="mt-6 px-6 py-4 bg-white rounded-lg shadow border border-gray-200 flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
-              <span>Show</span>
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                  setPage(1);
-                }}
-                className="px-2 py-1 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
-              >
-                <option value="6">6</option>
-                <option value="9">9</option>
-                <option value="12">12</option>
-                <option value="24">24</option>
-              </select>
-              <span>
-                of {totalItems} permissions
-              </span>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setPage(Math.max(1, page - 1))}
-                disabled={page === 1}
-                className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-              >
-                Previous
-              </button>
-              
-              <div className="flex items-center gap-1">
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNum;
-                  if (totalPages <= 5) {
-                    pageNum = i + 1;
-                  } else if (page <= 3) {
-                    pageNum = i + 1;
-                  } else if (page >= totalPages - 2) {
-                    pageNum = totalPages - 4 + i;
-                  } else {
-                    pageNum = page - 2 + i;
-                  }
-                  
-                  return (
-                    <button
-                      key={pageNum}
-                      onClick={() => setPage(pageNum)}
-                      className={`px-3 py-1 rounded-lg transition ${
-                        page === pageNum
-                          ? 'bg-indigo-600 text-white'
-                          : 'border border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {pageNum}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <button
-                onClick={() => setPage(Math.min(totalPages, page + 1))}
-                disabled={page === totalPages}
-                className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
-              >
-                Next
-              </button>
-            </div>
           </div>
         )}
       </div>
