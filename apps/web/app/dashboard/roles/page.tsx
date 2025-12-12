@@ -41,6 +41,10 @@ const RolesManagementPage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
 
   // States for modals
   const [activeModal, setActiveModal] = useState<ModalType>(null);
@@ -59,8 +63,17 @@ const RolesManagementPage = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await api.get('/roles');
-      setRoles(response.data);
+      const params = new URLSearchParams({
+        page: page.toString(),
+        limit: pageSize.toString(),
+      });
+      
+      if (searchTerm) params.append('search', searchTerm);
+      
+      const response = await api.get(`/roles?${params.toString()}`);
+      setRoles(response.data.data || response.data);
+      setTotalPages(response.data.totalPages || 1);
+      setTotalItems(response.data.total || response.data.length);
     } catch (err: any) {
       const errorMessage = err.response?.data?.message || 'Failed to fetch roles.';
       setError(errorMessage);
@@ -85,12 +98,10 @@ const RolesManagementPage = () => {
   useEffect(() => {
     fetchRoles();
     fetchPermissions();
-  }, []);
+  }, [page, pageSize, searchTerm]);
 
-  // Filter roles based on search term
-  const filteredRoles = roles.filter(role =>
-    role.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // Filter roles based on search term (client-side fallback if API doesn't support search)
+  const filteredRoles = roles;
 
   // --- Modal Handlers ---
 
@@ -248,7 +259,10 @@ const RolesManagementPage = () => {
             placeholder="Search roles by name..."
             className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500 transition duration-150 ease-in-out"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
       </div>
@@ -328,6 +342,78 @@ const RolesManagementPage = () => {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && !isLoading && (
+        <div className="mt-6 px-6 py-4 bg-white rounded-lg shadow border border-gray-200 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span>Show</span>
+            <select
+              value={pageSize}
+              onChange={(e) => {
+                setPageSize(Number(e.target.value));
+                setPage(1);
+              }}
+              className="px-2 py-1 border border-gray-300 rounded-lg focus:ring-indigo-500 focus:border-indigo-500"
+            >
+              <option value="6">6</option>
+              <option value="9">9</option>
+              <option value="12">12</option>
+              <option value="24">24</option>
+            </select>
+            <span>
+              of {totalItems} roles
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setPage(Math.max(1, page - 1))}
+              disabled={page === 1}
+              className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Previous
+            </button>
+            
+            <div className="flex items-center gap-1">
+              {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                let pageNum;
+                if (totalPages <= 5) {
+                  pageNum = i + 1;
+                } else if (page <= 3) {
+                  pageNum = i + 1;
+                } else if (page >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = page - 2 + i;
+                }
+                
+                return (
+                  <button
+                    key={pageNum}
+                    onClick={() => setPage(pageNum)}
+                    className={`px-3 py-1 rounded-lg transition ${
+                      page === pageNum
+                        ? 'bg-indigo-600 text-white'
+                        : 'border border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    {pageNum}
+                  </button>
+                );
+              })}
+            </div>
+
+            <button
+              onClick={() => setPage(Math.min(totalPages, page + 1))}
+              disabled={page === totalPages}
+              className="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition"
+            >
+              Next
+            </button>
+          </div>
         </div>
       )}
 
