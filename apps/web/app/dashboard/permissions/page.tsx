@@ -4,16 +4,17 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Key, Plus, Trash2, Shield, X, Search, ChevronDown, Loader2 } from 'lucide-react';
 import clsx from 'clsx'; // For conditional class names
 import { PermissionsSkeleton } from '@/components/loading-skeletons';
+import { api } from '@/lib/api';
 
-// --- MOCK API (Replace with actual '@/lib/api' in a real project) ---
+// --- API Interfaces ---
 interface Permission {
   id: string;
   name: string;
   resource: string;
   action: string;
   description?: string;
-  roleCount: number;
-  rolePermissions: Array<{
+  roleCount?: number;
+  rolePermissions?: Array<{
     role: {
       name: string;
     };
@@ -27,140 +28,6 @@ interface CreatePermissionPayload {
   action: string;
   description?: string;
 }
-
-// Mock data store
-let mockPermissionsData: Permission[] = [
-  {
-    id: 'perm-1',
-    name: 'users.create',
-    resource: 'users',
-    action: 'create',
-    description: 'Allows creating new user accounts.',
-    roleCount: 2,
-    rolePermissions: [{ role: { name: 'Admin' } }, { role: { name: 'Manager' } }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'perm-2',
-    name: 'users.read',
-    resource: 'users',
-    action: 'read',
-    description: 'Allows viewing user profiles.',
-    roleCount: 3,
-    rolePermissions: [{ role: { name: 'Admin' } }, { role: { name: 'Manager' } }, { role: { name: 'Viewer' } }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'perm-3',
-    name: 'users.delete',
-    resource: 'users',
-    action: 'delete',
-    description: 'Allows deleting user accounts.',
-    roleCount: 1,
-    rolePermissions: [{ role: { name: 'Admin' } }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'perm-4',
-    name: 'roles.manage',
-    resource: 'roles',
-    action: 'manage',
-    description: 'Grants full control over roles and their permissions.',
-    roleCount: 1,
-    rolePermissions: [{ role: { name: 'Admin' } }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'perm-5',
-    name: 'permissions.read',
-    resource: 'permissions',
-    action: 'read',
-    description: 'Allows viewing available permissions.',
-    roleCount: 2,
-    rolePermissions: [{ role: { name: 'Admin' } }, { role: { name: 'Manager' } }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'perm-6',
-    name: 'settings.update',
-    resource: 'settings',
-    action: 'update',
-    description: 'Allows modifying application settings.',
-    roleCount: 1,
-    rolePermissions: [{ role: { name: 'Admin' } }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'perm-7',
-    name: 'audit.read',
-    resource: 'audit',
-    action: 'read',
-    description: 'Allows viewing audit logs.',
-    roleCount: 1,
-    rolePermissions: [{ role: { name: 'Admin' } }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'perm-8',
-    name: 'users.update',
-    resource: 'users',
-    action: 'update',
-    description: 'Allows updating existing user accounts.',
-    roleCount: 2,
-    rolePermissions: [{ role: { name: 'Admin' } }, { role: { name: 'Manager' } }],
-    createdAt: new Date().toISOString(),
-  },
-  {
-    id: 'perm-9',
-    name: 'permissions.create',
-    resource: 'permissions',
-    action: 'create',
-    description: 'Allows creation of new permissions.',
-    roleCount: 1,
-    rolePermissions: [{ role: { name: 'Admin' } }],
-    createdAt: new Date().toISOString(),
-  },
-];
-
-let nextPermissionId = mockPermissionsData.length + 1;
-
-// Mock API object
-const api = {
-  get: async (url: string) => {
-    await new Promise(resolve => setTimeout(resolve, 700)); // Simulate network delay
-    if (url === '/permissions') {
-      return { data: mockPermissionsData };
-    }
-    throw new Error(`API GET: Not Found for ${url}`);
-  },
-  post: async (url: string, data: CreatePermissionPayload) => {
-    await new Promise(resolve => setTimeout(resolve, 700)); // Simulate network delay
-    if (url === '/permissions') {
-      const newPermission: Permission = {
-        ...data,
-        id: `perm-${nextPermissionId++}`,
-        roleCount: 0,
-        rolePermissions: [],
-        createdAt: new Date().toISOString(),
-      };
-      mockPermissionsData.push(newPermission);
-      return { data: newPermission };
-    }
-    throw new Error(`API POST: Bad Request for ${url}`);
-  },
-  delete: async (url: string) => {
-    await new Promise(resolve => setTimeout(resolve, 700)); // Simulate network delay
-    const parts = url.split('/');
-    const id = parts[parts.length - 1];
-    const initialLength = mockPermissionsData.length;
-    mockPermissionsData = mockPermissionsData.filter(p => p.id !== id);
-    if (mockPermissionsData.length === initialLength) {
-      throw new Error('Permission not found');
-    }
-    return { status: 204 }; // No content
-  },
-};
-// --- END MOCK API ---
 
 type ResourceType = 'users' | 'roles' | 'permissions' | 'settings' | 'audit';
 type ActionType = 'create' | 'read' | 'update' | 'delete' | 'manage';
@@ -210,7 +77,12 @@ export default function PermissionsManagementPage() {
     setError(null);
     try {
       const response = await api.get('/permissions');
-      setPermissions(response.data);
+      // Map the data to include roleCount from rolePermissions
+      const permissionsData = (response.data || []).map((p: any) => ({
+        ...p,
+        roleCount: p.rolePermissions?.length || 0,
+      }));
+      setPermissions(permissionsData);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch permissions');
       console.error('Failed to fetch permissions:', err);
@@ -299,7 +171,7 @@ export default function PermissionsManagementPage() {
       setFormData({ resource: '', action: '', description: '' });
       await fetchPermissions(); // Re-fetch all permissions
     } catch (err: any) {
-      setError(err.message || 'Failed to create permission.');
+      setError(err.response?.data?.message || err.message || 'Failed to create permission.');
       console.error('Failed to create permission:', err);
     } finally {
       setSubmittingCreate(false);
@@ -326,7 +198,7 @@ export default function PermissionsManagementPage() {
       await api.delete(`/permissions/${id}`);
       await fetchPermissions(); // Re-fetch all permissions
     } catch (err: any) {
-      setError(err.message || 'Failed to delete permission.');
+      setError(err.response?.data?.message || err.message || 'Failed to delete permission.');
       console.error('Failed to delete permission:', err);
     } finally {
       setLoading(false);
@@ -448,20 +320,20 @@ export default function PermissionsManagementPage() {
                           {permission.description && (
                             <p className="mt-2 text-sm text-gray-600 line-clamp-2">{permission.description}</p>
                           )}
-                          <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
+                            <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-sm text-gray-500">
                             <span>
                               Used by{' '}
                               <strong className="font-medium text-gray-800">
-                                {permission.roleCount} role{permission.roleCount !== 1 ? 's' : ''}
+                                {permission.roleCount || 0} role{permission.roleCount !== 1 ? 's' : ''}
                               </strong>
                             </span>
                             <div className="relative group/roles">
-                              {permission.roleCount > 0 && (
+                              {(permission.roleCount || 0) > 0 && (
                                 <span className="underline decoration-dashed decoration-gray-400 cursor-help">
                                   See roles
                                 </span>
                               )}
-                              {permission.roleCount > 0 && (
+                              {(permission.roleCount || 0) > 0 && permission.rolePermissions && (
                                 <div className="absolute right-0 bottom-full mb-2 hidden group-hover/roles:block w-auto min-w-[150px] max-w-xs rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5 z-10 p-2 text-white text-xs">
                                   <h4 className="font-semibold mb-1">Roles with this permission:</h4>
                                   <ul className="list-disc pl-4">
@@ -474,7 +346,7 @@ export default function PermissionsManagementPage() {
                               )}
                             </div>
                             <button
-                              onClick={() => handleDeletePermission(permission.id, permission.name, permission.roleCount)}
+                              onClick={() => handleDeletePermission(permission.id, permission.name, permission.roleCount || 0)}
                               className="p-1 rounded-full text-gray-400 hover:text-red-600 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
                               title="Delete permission"
                             >
