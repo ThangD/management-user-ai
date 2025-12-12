@@ -37,8 +37,8 @@ api.interceptors.response.use(
 
 // API Helper Functions
 export const fetchUsers = async () => {
-  const response = await api.get('/users');
-  return response.data;
+  const response = await api.get('/users?page=1&limit=1000');
+  return response.data.data || response.data;
 };
 
 export const fetchRoles = async () => {
