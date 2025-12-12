@@ -135,16 +135,8 @@ export default function PermissionsManagementPage() {
     });
   }, [groupedPermissions]);
 
-  // Pagination
-  const totalItems = filteredPermissions.length;
-  const totalPages = Math.ceil(totalItems / pageSize);
-  const paginatedPermissions = useMemo(() => {
-    const startIndex = (page - 1) * pageSize;
-    return filteredPermissions.slice(startIndex, startIndex + pageSize);
-  }, [filteredPermissions, page, pageSize]);
-
-  const paginatedGroupedPermissions = useMemo(() => {
-    return paginatedPermissions.reduce(
+  const displayGroupedPermissions = useMemo(() => {
+    return filteredPermissions.reduce(
       (acc, permission) => {
         const resource = permission.resource;
         if (!acc[resource]) {
@@ -155,18 +147,7 @@ export default function PermissionsManagementPage() {
       },
       {} as Record<string, Permission[]>
     );
-  }, [paginatedPermissions]);
-
-  const paginatedSortedResources = useMemo(() => {
-    return Object.keys(paginatedGroupedPermissions).sort((a, b) => {
-      const indexA = ALL_RESOURCES.indexOf(a as ResourceType);
-      const indexB = ALL_RESOURCES.indexOf(b as ResourceType);
-      if (indexA !== -1 && indexB !== -1) {
-        return indexA - indexB;
-      }
-      return a.localeCompare(b);
-    });
-  }, [paginatedGroupedPermissions]);
+  }, [filteredPermissions]);
 
   const handleCreatePermissionChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
