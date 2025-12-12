@@ -49,6 +49,7 @@ export default function DashboardLayout({
     { name: 'Users', href: '/dashboard/users', icon: Users },
     { name: 'Roles', href: '/dashboard/roles', icon: Shield },
     { name: 'Permissions', href: '/dashboard/permissions', icon: Key },
+    { name: 'My Profile', href: '/dashboard/profile', icon: User },
   ];
 
   if (!user) {
