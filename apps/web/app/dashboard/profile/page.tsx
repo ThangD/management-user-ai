@@ -6,9 +6,11 @@ import { useRouter } from 'next/navigation';
 interface UserProfile {
   id: string;
   email: string;
-  name: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
   status: string;
-  roles?: Array<{ id: string; name: string }>;
+  userRoles?: Array<{ role: { id: string; name: string } }>;
   createdAt: string;
 }
 
@@ -21,7 +23,9 @@ export default function ProfilePage() {
   
   // Edit mode states
   const [isEditing, setIsEditing] = useState(false);
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [phone, setPhone] = useState('');
   
   // Change password states
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -53,7 +57,9 @@ export default function ProfilePage() {
 
       const data = await response.json();
       setProfile(data);
-      setName(data.name);
+      setFirstName(data.firstName || '');
+      setLastName(data.lastName || '');
+      setPhone(data.phone || '');
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -74,7 +80,11 @@ export default function ProfilePage() {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ 
+          firstName, 
+          lastName,
+          phone: phone || undefined 
+        }),
       });
 
       if (!response.ok) {
@@ -179,14 +189,38 @@ export default function ProfilePage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Name
+                  First Name
                 </label>
                 <input
                   type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={firstName}
+                  onChange={(e) => setFirstName(e.target.value)}
                   className="w-full border border-gray-300 rounded px-3 py-2"
                   required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Last Name
+                </label>
+                <input
+                  type="text"
+                  value={lastName}
+                  onChange={(e) => setLastName(e.target.value)}
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Phone
+                </label>
+                <input
+                  type="tel"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full border border-gray-300 rounded px-3 py-2"
+                  placeholder="+1234567890"
                 />
               </div>
               <div>
@@ -212,7 +246,9 @@ export default function ProfilePage() {
                   type="button"
                   onClick={() => {
                     setIsEditing(false);
-                    setName(profile.name);
+                    setFirstName(profile.firstName);
+                    setLastName(profile.lastName);
+                    setPhone(profile.phone || '');
                   }}
                   className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
                 >
@@ -225,16 +261,20 @@ export default function ProfilePage() {
           <div className="space-y-3">
             <div>
               <label className="block text-sm font-medium text-gray-500">Name</label>
-              <p className="text-lg">{profile.name}</p>
+              <p className="text-lg">{profile.firstName} {profile.lastName}</p>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-500">Email</label>
               <p className="text-lg">{profile.email}</p>
             </div>
             <div>
+              <label className="block text-sm font-medium text-gray-500">Phone</label>
+              <p className="text-lg">{profile.phone || 'Not provided'}</p>
+            </div>
+            <div>
               <label className="block text-sm font-medium text-gray-500">Status</label>
               <span className={`inline-block px-2 py-1 rounded text-sm ${
-                profile.status === 'ACTIVE' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                profile.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
               }`}>
                 {profile.status}
               </span>
@@ -242,10 +282,10 @@ export default function ProfilePage() {
             <div>
               <label className="block text-sm font-medium text-gray-500">Roles</label>
               <div className="flex gap-2 mt-1">
-                {profile.roles && profile.roles.length > 0 ? (
-                  profile.roles.map((role) => (
-                    <span key={role.id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
-                      {role.name}
+                {profile.userRoles && profile.userRoles.length > 0 ? (
+                  profile.userRoles.map((userRole) => (
+                    <span key={userRole.role.id} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
+                      {userRole.role.name}
                     </span>
                   ))
                 ) : (
