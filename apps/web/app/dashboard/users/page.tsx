@@ -69,8 +69,8 @@ export default function UsersPage() {
       
       const response = await api.get(`/users?${params.toString()}`);
       setUsers(response.data.data);
-      setTotalPages(response.data.totalPages);
-      setTotalItems(response.data.total);
+      setTotalPages(response.data.meta.totalPages);
+      setTotalItems(response.data.meta.total);
     } catch (error) {
       console.error('Failed to fetch users:', error);
       toast.error('Failed to load users');
