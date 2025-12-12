@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import apiClient from '@/lib/api-client';
+import api from '@/lib/api';
 
 interface ActivityLog {
   id: string;
@@ -47,7 +47,7 @@ export default function ActivityLogsPage() {
   const fetchLogs = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get<ActivityLogsResponse>(
+      const response = await api.get<ActivityLogsResponse>(
         `/activity-logs?page=${page}&limit=${limit}`
       );
       setLogs(response.data.data);
