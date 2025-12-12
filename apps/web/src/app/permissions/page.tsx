@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { apiClient } from '@/lib/api-client';
+import axios from 'axios';
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
 
 interface Permission {
   id: string;
@@ -24,7 +26,12 @@ export default function PermissionsPage() {
   const fetchPermissions = async () => {
     try {
       setLoading(true);
-      const response = await apiClient.get('/permissions');
+      const token = localStorage.getItem('token');
+      const response = await axios.get(`${API_URL}/permissions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setPermissions(response.data);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to load permissions');
