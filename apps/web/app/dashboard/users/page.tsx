@@ -168,7 +168,15 @@ export default function UsersPage() {
     }
   };
 
-  if (loading) {
+  const [initialLoading, setInitialLoading] = useState(true);
+
+  useEffect(() => {
+    if (initialLoading) {
+      setInitialLoading(false);
+    }
+  }, []);
+
+  if (initialLoading && loading) {
     return <UsersSkeleton />;
   }
 
@@ -260,7 +268,16 @@ export default function UsersPage() {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {users.map((user) => (
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-12 text-center">
+                    <div className="flex justify-center items-center">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+                      <span className="ml-3 text-gray-600 dark:text-gray-400">Loading users...</span>
+                    </div>
+                  </td>
+                </tr>
+              ) : users.map((user) => (
                 <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
@@ -339,7 +356,8 @@ export default function UsersPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+              ))
+              )}
             </tbody>
           </table>
         </div>
