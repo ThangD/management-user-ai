@@ -8,6 +8,7 @@ import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { HealthController } from './health/health.controller';
+import { ActivityLogsModule } from './activity-logs/activity-logs.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { HealthController } from './health/health.controller';
     UsersModule,
     RolesModule,
     PermissionsModule,
+    ActivityLogsModule,
   ],
   controllers: [AppController, HealthController],
   providers: [AppService],

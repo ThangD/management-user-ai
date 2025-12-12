@@ -8,12 +8,14 @@ import {
   Delete,
   UseGuards,
   Query,
+  Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AssignRolesDto } from './dto/assign-roles.dto';
+import { UpdateProfileDto, ChangePasswordDto } from './dto/update-profile.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Users')
@@ -32,18 +34,49 @@ export class UsersController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all users with pagination' })
+  @ApiOperation({ summary: 'Get all users with pagination and filters' })
   @ApiQuery({ name: 'page', required: false, type: Number })
   @ApiQuery({ name: 'limit', required: false, type: Number })
+  @ApiQuery({ name: 'search', required: false, type: String })
+  @ApiQuery({ name: 'status', required: false, type: String })
+  @ApiQuery({ name: 'roleId', required: false, type: String })
   @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
   findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
+    @Query('search') search?: string,
+    @Query('status') status?: string,
+    @Query('roleId') roleId?: string,
   ) {
     return this.usersService.findAll(
       page ? parseInt(page) : 1,
       limit ? parseInt(limit) : 10,
+      search,
+      status,
+      roleId,
     );
+  }
+
+  @Get('profile')
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ status: 200, description: 'Profile retrieved successfully' })
+  getProfile(@Request() req) {
+    return this.usersService.findOne(req.user.userId);
+  }
+
+  @Patch('profile')
+  @ApiOperation({ summary: 'Update current user profile' })
+  @ApiResponse({ status: 200, description: 'Profile updated successfully' })
+  updateProfile(@Request() req, @Body() updateProfileDto: UpdateProfileDto) {
+    return this.usersService.updateProfile(req.user.userId, updateProfileDto);
+  }
+
+  @Post('profile/change-password')
+  @ApiOperation({ summary: 'Change current user password' })
+  @ApiResponse({ status: 200, description: 'Password changed successfully' })
+  @ApiResponse({ status: 400, description: 'Current password is incorrect' })
+  changePassword(@Request() req, @Body() changePasswordDto: ChangePasswordDto) {
+    return this.usersService.changePassword(req.user.userId, changePasswordDto);
   }
 
   @Get(':id')

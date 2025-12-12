@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { AssignRolesDto } from './dto/assign-roles.dto';
+import { UpdateProfileDto, ChangePasswordDto } from './dto/update-profile.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -46,11 +47,41 @@ export class UsersService {
     return userWithoutPassword;
   }
 
-  async findAll(page: number = 1, limit: number = 10) {
+  async findAll(
+    page: number = 1,
+    limit: number = 10,
+    search?: string,
+    status?: string,
+    roleId?: string,
+  ) {
     const skip = (page - 1) * limit;
+
+    // Build where clause
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { email: { contains: search, mode: 'insensitive' } },
+        { firstName: { contains: search, mode: 'insensitive' } },
+        { lastName: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (roleId) {
+      where.userRoles = {
+        some: {
+          roleId: roleId,
+        },
+      };
+    }
 
     const [users, total] = await Promise.all([
       this.prisma.user.findMany({
+        where,
         skip,
         take: limit,
         include: {
@@ -64,7 +95,7 @@ export class UsersService {
           createdAt: 'desc',
         },
       }),
-      this.prisma.user.count(),
+      this.prisma.user.count({ where }),
     ]);
 
     // Remove password hashes
@@ -187,5 +218,72 @@ export class UsersService {
 
     // Return updated user with roles
     return this.findOne(userId);
+  }
+
+  async updateProfile(userId: string, updateProfileDto: UpdateProfileDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    // Check email uniqueness if email is being updated
+    if (updateProfileDto.email && updateProfileDto.email !== user.email) {
+      const emailExists = await this.prisma.user.findUnique({
+        where: { email: updateProfileDto.email },
+      });
+
+      if (emailExists) {
+        throw new ConflictException('Email already in use');
+      }
+    }
+
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data: updateProfileDto,
+      include: {
+        userRoles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+
+    const { passwordHash, ...userWithoutPassword } = updatedUser;
+    return userWithoutPassword;
+  }
+
+  async changePassword(userId: string, changePasswordDto: ChangePasswordDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User not found`);
+    }
+
+    // Verify current password
+    const isPasswordValid = await bcrypt.compare(
+      changePasswordDto.currentPassword,
+      user.passwordHash,
+    );
+
+    if (!isPasswordValid) {
+      throw new BadRequestException('Current password is incorrect');
+    }
+
+    // Hash new password
+    const newPasswordHash = await bcrypt.hash(changePasswordDto.newPassword, 10);
+
+    // Update password
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { passwordHash: newPasswordHash },
+    });
+
+    return { message: 'Password changed successfully' };
   }
 }
