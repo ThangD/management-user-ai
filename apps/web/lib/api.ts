@@ -41,6 +41,11 @@ export const fetchUsers = async () => {
   return response.data.data || response.data;
 };
 
+export const fetchUsersStats = async () => {
+  const response = await api.get('/users?page=1&limit=1');
+  return response.data; // Returns { data, total, page, limit }
+};
+
 export const fetchRoles = async () => {
   const response = await api.get('/roles');
   return response.data;

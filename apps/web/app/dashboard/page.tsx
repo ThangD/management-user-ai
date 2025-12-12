@@ -39,7 +39,7 @@ interface Permission {
 // IMPORTANT: These functions are expected to be implemented in '@/lib/api'.
 // For demonstration purposes, types are defined above.
 // In a real application, ensure these functions handle fetching and error states.
-import { fetchUsers, fetchRoles, fetchPermissions } from '@/lib/api';
+import { fetchUsersStats, fetchRoles, fetchPermissions } from '@/lib/api';
 
 // --- Component Definition ---
 
@@ -55,14 +55,14 @@ const DashboardHomePage: React.FC = () => {
       try {
         // Use Promise.allSettled to allow all fetches to complete regardless of individual errors
         const [usersResult, rolesResult, permissionsResult] = await Promise.allSettled([
-          fetchUsers(),
+          fetchUsersStats(),
           fetchRoles(),
           fetchPermissions(),
         ]);
 
         // Update state based on fulfillment status
         if (usersResult.status === 'fulfilled') {
-          setTotalUsers(usersResult.value.length);
+          setTotalUsers(usersResult.value.total || 0);
         } else {
           console.error('Failed to fetch users:', usersResult.reason);
           setTotalUsers(0); // Show 0 on error
