@@ -25,11 +25,11 @@ export default function AuditLogsPage() {
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [filters, setFilters] = useState({
-    action: '',
-    entity: '',
-    userId: '',
-  });
+  const [filters, setFilters] = useState<{
+    action?: string;
+    entity?: string;
+    userId?: number;
+  }>({});
 
   useEffect(() => {
     loadLogs();
@@ -38,7 +38,7 @@ export default function AuditLogsPage() {
   const loadLogs = async () => {
     try {
       setLoading(true);
-      const response = await auditService.getLogs({
+      const response = await auditService.getAll({
         page,
         limit: 20,
         ...filters,
@@ -121,7 +121,7 @@ export default function AuditLogsPage() {
             <input
               type="text"
               value={filters.userId}
-              onChange={(e) => setFilters({ ...filters, userId: e.target.value })}
+              onChange={(e) => setFilters({ ...filters, userId: e.target.value ? parseInt(e.target.value) : undefined })}
               placeholder="Filter by user ID"
               className="w-full px-3 py-2 border border-gray-300 rounded-md"
             />

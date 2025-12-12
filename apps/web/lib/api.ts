@@ -51,4 +51,12 @@ export const fetchPermissions = async () => {
   return response.data;
 };
 
+// Audit Service
+export const auditService = {
+  getAll: async (params?: { page?: number; limit?: number; action?: string; userId?: number }) => {
+    const response = await api.get('/audit', { params });
+    return response.data;
+  },
+};
+
 export default api;
