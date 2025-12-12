@@ -244,7 +244,7 @@ const DashboardHomePage: React.FC = () => {
             icon={Activity}
             title="Activity Log"
             description="Review recent system activities and audit trails for security."
-            disabled // This card is marked as coming soon
+            href="/dashboard/audit-logs"
           />
         </div>
       </section>
