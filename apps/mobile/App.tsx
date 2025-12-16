@@ -5,6 +5,7 @@ import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { LoginScreen } from './src/screens/LoginScreen';
 import { DashboardScreen } from './src/screens/DashboardScreen';
 import { UsersScreen } from './src/screens/UsersScreen';
+import { RolesScreen } from './src/screens/RolesScreen';
 import { ProfileScreen } from './src/screens/ProfileScreen';
 import { ActivityLogsScreen } from './src/screens/ActivityLogsScreen';
 import { ActivityIndicator, View } from 'react-native';
@@ -42,6 +43,11 @@ function AppNavigator() {
               name="Users"
               component={UsersScreen}
               options={{ title: 'Users' }}
+            />
+            <Stack.Screen
+              name="Roles"
+              component={RolesScreen}
+              options={{ title: 'Roles' }}
             />
             <Stack.Screen
               name="Profile"
